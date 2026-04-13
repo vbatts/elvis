@@ -654,7 +654,16 @@ static void starttcap()
 		switch (tgetent(ttybuf, tochar8(o_term)))
 		{
 		  case -1:	msg(MSG_FATAL, "termcap database unreadable");
-		  case 0:	msg(MSG_FATAL, "[S]TERM=$1 unknown", o_term);
+		  case 0:
+			/* If the terminal type is not found in the built-in
+			 * database, fall back to "xterm" which is compatible
+			 * with most modern terminal emulators (tmux, alacritty,
+			 * foot, etc. all advertise tmux-256color, foot, etc.)
+			 */
+			o_term = toCHAR("xterm");
+			if (tgetent(ttybuf, tochar8(o_term)) != 1)
+				msg(MSG_FATAL, "[S]TERM=$1 unknown, and xterm fallback failed", o_term);
+			break;
 		}
 	}
 
@@ -1336,9 +1345,13 @@ static int test()
 	if (!term)
 		return 0;
 
-	/* find termcap entry.  If none, then return 0 */
+	/* find termcap entry.  If none, try falling back to "xterm" */
 	if (tgetent(ttybuf, term) != 1)
-		return 0;
+	{
+		/* unknown terminal type — fall back to xterm */
+		if (tgetent(ttybuf, "xterm") != 1)
+			return 0;
+	}
 	gotentry = 1;
 
 	/* check for some required strings and numbers */

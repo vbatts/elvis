@@ -8,6 +8,10 @@ char id_tcaposix[] = "$Id: tcaposix.h,v 2.13 2003/01/26 19:41:36 steve Exp $";
 #include <signal.h>
 #include <unistd.h>
 
+/* Cosmopolitan libc doesn't define SA_NOMASK/SA_INTERRUPT, so use the
+ * portable signal() fallback instead of sigaction(). */
+#undef SA_NOMASK
+
 /* HPUX does a "#define ttysize winsize".  Elvis doesn't like that. */
 #undef ttysize
 

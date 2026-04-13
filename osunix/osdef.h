@@ -95,7 +95,7 @@
  * This is the default terminal type, used by the "termcap" GUI whenever the
  * TERM environment variable is unset.
  */
-#define TTY_DEFAULT	"unknown"
+#define TTY_DEFAULT	"xterm"
 
 /*=============================================================================
  * This determines whether filename completion should ignore case differences.

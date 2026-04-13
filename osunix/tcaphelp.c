@@ -115,9 +115,12 @@ char *ttytermtype()
 	char	*type;
 
 	type = getenv("TERM");
-	if (!type)
+	if (!type || !*type || !strcmp(type, "unknown"))
 	{
-		type = TTY_DEFAULT;
+		/* If TERM is unset, empty, or "unknown", fall back to "xterm"
+		 * which is widely supported and works in most modern terminals.
+		 */
+		type = "xterm";
 	}
 	return type;
 }
